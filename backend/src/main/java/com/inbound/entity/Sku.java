@@ -1,6 +1,7 @@
 package com.inbound.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class Sku {
 
     @ManyToOne
     @JoinColumn(name = "asn_id")
+    @JsonIgnore
     private Asn asn;
 
 }

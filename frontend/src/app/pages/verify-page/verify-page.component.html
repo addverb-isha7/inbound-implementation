@@ -1,0 +1,106 @@
+<div class="max-w-7xl mx-auto px-10 py-8">
+
+  <!-- Page Title -->
+  <h1 class="text-3xl font-semibold mb-2">
+    SKU Verification
+  </h1>
+
+  <p class="text-gray-600 mb-10">
+    Verify incoming SKU items against their ASN records.
+  </p>
+
+  <!-- Card Container -->
+  <div class="max-w-xl mx-auto bg-white rounded-2xl shadow-md p-8">
+
+    <h2 class="text-xl font-semibold mb-2">
+      Verify SKU
+    </h2>
+
+    <p class="text-gray-500 text-sm mb-6">
+      Enter the shipment and SKU details to verify against ASN records.
+    </p>
+
+    <form
+      [formGroup]="verifyForm"
+      (ngSubmit)="onVerify()"
+      class="space-y-5"
+    >
+
+      <!-- Shipment Number -->
+      <div>
+        <label class="block text-sm font-medium mb-1">
+          ASN / Shipment Number
+        </label>
+        <input
+          formControlName="shipmentNumber"
+          placeholder="e.g. SHP-20260217-001"
+          class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+        />
+      </div>
+
+      <!-- SKU ID -->
+      <div>
+        <label class="block text-sm font-medium mb-1">
+          SKU ID
+        </label>
+        <input
+          formControlName="skuId"
+          placeholder="e.g. SKU-1234"
+          class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+        />
+      </div>
+
+      <!-- MRP + Batch Row -->
+      <div class="grid grid-cols-2 gap-4">
+
+        <div>
+          <label class="block text-sm font-medium mb-1">
+            MRP
+          </label>
+          <input
+            formControlName="mrp"
+            placeholder="e.g. 299.99"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">
+            Batch Number
+          </label>
+          <input
+            formControlName="batchNumber"
+            placeholder="e.g. BATCH-001"
+            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+          />
+        </div>
+
+      </div>
+
+      <!-- Expiry -->
+      <div>
+        <label class="block text-sm font-medium mb-1">
+          Expiry Date
+        </label>
+        <input
+          type="date"
+          formControlName="expiryDate"
+          class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
+        />
+      </div>
+
+      <!-- Button -->
+      <div class="pt-2">
+        <button
+          type="submit"
+          class="flex items-center gap-2 bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition"
+        >
+          🔍 Verify SKU
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
