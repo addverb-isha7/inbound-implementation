@@ -1,5 +1,6 @@
 package com.inbound.client;
 
+import com.inbound.dto.InventoryRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,8 +15,14 @@ public class InventoryClient {
     @Value("${inventory.service.url}")
     private String inventoryUrl;
 
-    public void addToInventory(Object request) {
-        restTemplate.postForObject(inventoryUrl, request, String.class);
+    public void addToInventory(InventoryRequest request) {
+        try {
+            System.out.println("Sending to inventory: " + request);
+            restTemplate.postForObject(inventoryUrl, request, String.class);
+        } catch (Exception e) {
+            System.out.println("Inventory service failed: " + e.getMessage());
+            throw e; // optional (you can remove this if you don’t want it to crash)
+        }
     }
-}
 
+}

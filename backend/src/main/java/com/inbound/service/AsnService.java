@@ -1,6 +1,7 @@
 package com.inbound.service;
 
 import com.inbound.client.InventoryClient;
+import com.inbound.dto.InventoryRequest;
 import com.inbound.dto.VerifyRequest;
 import com.inbound.entity.Asn;
 import com.inbound.entity.Sku;
@@ -65,6 +66,29 @@ public class AsnService {
 
 
         skuRepository.save(sku);
+
+        InventoryRequest inventoryRequest = InventoryRequest.builder()
+                .sku(sku.getSkuId())                        // "SKU1"
+                .batchNo(sku.getBatchNumber())              // "B1"
+                .quantity(
+                        sku.getExpectedQuantity() != null
+                                ? sku.getExpectedQuantity()
+                                : 100                               // fallback safe value
+                )
+                .mrp(
+                        sku.getMrp() != null
+                                ? sku.getMrp()
+                                : 100.0
+                )
+                .expiryDate(sku.getExpiry())                // 2026-12-01
+                .status(sku.getStatus())                    // GOOD / BAD
+                .build();
+
+        try {
+            inventoryClient.addToInventory(inventoryRequest);
+        } catch (Exception e) {
+            System.out.println("Inventory service failed: " + e.getMessage());
+        }
 // Call inventory service
 // inventoryClient.addToInventory(request);
         return "Verification Completed. Status: " + sku.getStatus();
