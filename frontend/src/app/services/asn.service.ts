@@ -3,13 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Asn } from '../models/asn.model';
 import { Sku } from '../models/sku.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AsnService {
 
-  private baseUrl = 'http://localhost:8081/api/asn';
+  private baseUrl = environment.apiUrl + '/asn';
 
   constructor(private http: HttpClient) {}
 
@@ -22,6 +23,9 @@ export class AsnService {
   }
 
   verifySku(shipmentNumber: string, sku: Sku): Observable<any> {
-    return this.http.post(`${this.baseUrl}/${shipmentNumber}/verify`, sku);
+    return this.http.post(`${this.baseUrl}/${shipmentNumber}/verify`, 
+      sku,
+     { responseType: 'text' }
+    );
   }
 }

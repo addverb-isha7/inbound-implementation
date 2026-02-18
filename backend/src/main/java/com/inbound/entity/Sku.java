@@ -21,14 +21,14 @@ public class Sku {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String skuId;          // supplier entered
+    private String skuId;
     private String skuName;
     private Double mrp;
     private String batchNumber;
     private LocalDate expiry;
     private Integer expectedQuantity;
 
-    private String status;         // PENDING / GOOD / BAD
+    private String status;
 
     @ManyToOne
     @JoinColumn(name = "asn_id")

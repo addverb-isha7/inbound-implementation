@@ -31,11 +31,9 @@
         <label class="block text-sm font-medium mb-1">
           ASN / Shipment Number
         </label>
-        <input
-          formControlName="shipmentNumber"
-          placeholder="e.g. SHP-20260217-001"
-          class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
-        />
+        <input formControlName="shipmentNumber"
+         placeholder="Shipment Number"
+         class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none" />
       </div>
 
       <!-- SKU ID -->
@@ -49,6 +47,15 @@
           class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
         />
       </div>
+
+<div>
+  <label class="block text-sm font-medium mb-1">
+    SKU NAME
+  </label>
+  <input formControlName="skuName"
+         placeholder="SKU Name"
+         class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none" />
+</div>
 
       <!-- MRP + Batch Row -->
       <div class="grid grid-cols-2 gap-4">
@@ -84,7 +91,7 @@
         </label>
         <input
           type="date"
-          formControlName="expiryDate"
+          formControlName="expiry"
           class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-red-500 focus:outline-none"
         />
       </div>

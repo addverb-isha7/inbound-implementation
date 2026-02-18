@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
+import { AsnService } from '../../services/asn.service';
+import {Asn} from '../../models/asn.model';
 
 @Component({
   selector: 'app-asn-page',
@@ -13,10 +15,10 @@ export class AsnPageComponent {
 
   asnForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder,private asnService: AsnService) {
     this.asnForm = this.fb.group({
       shipmentNumber: ['', Validators.required],
-      supplierName: ['', Validators.required],
+      supplier: ['', Validators.required],
       skus: this.fb.array([this.createSku()])
     });
   }
@@ -27,8 +29,8 @@ export class AsnPageComponent {
       skuName: ['', Validators.required],
       mrp: ['', Validators.required],
       batchNumber: ['', Validators.required],
-      expiryDate: ['', Validators.required],
-      quantity: ['', Validators.required]
+      expiry: ['', Validators.required],
+      expectedQuantity: ['', Validators.required]
     });
   }
 
@@ -45,8 +47,28 @@ export class AsnPageComponent {
   }
 
   onSubmit() {
-    if (this.asnForm.valid) {
-      console.log(this.asnForm.value);
-    }
+  if (this.asnForm.valid) {
+
+    const asnData: Asn = this.asnForm.value;
+
+    this.asnService.createAsn(asnData).subscribe({
+      next: (response) => {
+        console.log('ASN Created:', response);
+        alert('ASN Saved Successfully ✅');
+
+        this.asnForm.reset();
+        this.skus.clear();
+        this.addSku();
+          console.log(JSON.stringify(this.asnForm.value));
+      },
+      error: (error) => {
+        console.error('Error creating ASN:', error);
+        alert('Error saving ASN ❌');
+      }
+    });
+
   }
+}
+
+
 }
