@@ -29,10 +29,25 @@ export class DashboardComponent implements OnInit {
 
   loadAllAsns() {
     this.asnService.getAllAsns().subscribe({
-      next: (data) => {
-        console.log('ASN Response:', data);
-        this.asns = data || [];
-      },
+     next: (data: any) => {
+  console.log('ASN Response:', data);
+
+  if (Array.isArray(data)) {
+    this.asns = data;
+  } else if (Array.isArray(data?.data)) {
+    this.asns = data.data;
+  } else if (Array.isArray(data?.content)) {
+    this.asns = data.content;
+  } else if (Array.isArray(data?.asns)) {
+    this.asns = data.asns;
+  } else {
+    console.error('Unexpected response structure');
+    this.asns = [];
+  }
+
+  console.log('Final ASN Array:', this.asns);
+},
+ 
       error: (err) => {
         console.error('Error loading ASNs', err);
       }
