@@ -1,9 +1,23 @@
 import { Routes } from '@angular/router';
-import { AsnPageComponent } from './pages/asn-page/asn-page.component';
-import { VerifyPageComponent } from './pages/verify-page/verify-page.component';
+import { ShellComponent } from './layout/shell.component';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'asn', pathMatch: 'full' },
-  { path: 'asn', component: AsnPageComponent },
-  { path: 'verify', component: VerifyPageComponent }
+  {
+    path: '',
+    component: ShellComponent,
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/dashboard/dashboard.component')
+            .then(m => m.DashboardComponent)
+      },
+      {
+        path: 'verify',
+        loadComponent: () =>
+          import('./pages/verify-page/verify-page.component')
+            .then(m => m.VerifyPageComponent)
+      }
+    ]
+  }
 ];

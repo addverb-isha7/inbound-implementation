@@ -17,4 +17,5 @@ public class InventoryRequest {
     private Double mrp;
     private LocalDate expiryDate;
     private String status;
+    private String operation;
 }

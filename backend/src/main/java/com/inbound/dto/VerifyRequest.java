@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Setter
 public class VerifyRequest {
 
+private String shipmentNumber;
     private String skuId;
     private String skuName;
     private String batchNumber;

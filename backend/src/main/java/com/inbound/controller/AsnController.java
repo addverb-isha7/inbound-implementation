@@ -30,12 +30,10 @@ public class AsnController {
         return asnService.getByShipment(shipmentNumber);
     }
 
-    @PostMapping("/{shipmentNumber}/verify")
-    public String verify(
-            @PathVariable String shipmentNumber,
-            @RequestBody VerifyRequest request) {
-
-        return asnService.verify(shipmentNumber, request);
+    @PostMapping("/verify")
+    public String verify(@RequestBody VerifyRequest request) {
+        return asnService.verify(request);
     }
+
 }
 

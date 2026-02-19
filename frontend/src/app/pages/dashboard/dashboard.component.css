@@ -1,0 +1,64 @@
+.dashboard-container {
+  padding: 30px;
+  font-family: Arial, sans-serif;
+}
+
+.search-bar {
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  padding: 8px;
+  width: 250px;
+  margin-right: 10px;
+}
+
+.search-bar button {
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.asn-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.asn-header {
+  padding: 15px;
+  background-color: #f5f5f5;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sku-table {
+  padding: 15px;
+  background-color: white;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.good {
+  color: green;
+  font-weight: bold;
+}
+
+.pending {
+  color: orange;
+  font-weight: bold;
+}
+
+.damaged {
+  color: red;
+  font-weight: bold;
+}

@@ -2,6 +2,7 @@ package com.inbound.service;
 
 import com.inbound.client.InventoryClient;
 import com.inbound.dto.InventoryRequest;
+import com.inbound.dto.InventoryResponse;
 import com.inbound.dto.VerifyRequest;
 import com.inbound.entity.Asn;
 import com.inbound.entity.Sku;
@@ -41,14 +42,17 @@ public class AsnService {
                 .orElseThrow(() -> new RuntimeException("ASN not found"));
     }
 
-    public String verify(String shipmentNumber, VerifyRequest request) {
+    public String verify(VerifyRequest request) {
 
-        Asn asn = getByShipment(shipmentNumber);
+        Asn asn = getByShipment(request.getShipmentNumber());
 
         Sku sku = skuRepository
-                .findBySkuIdAndAsn_ShipmentNumber(request.getSkuId(), shipmentNumber)
-                .orElseThrow(() -> new RuntimeException("SKU not found in this ASN"));
+                .findBySkuIdAndAsn_ShipmentNumber(
+                        request.getSkuId(),
+                        request.getShipmentNumber())
+                .orElseThrow(() -> new RuntimeException("SKU not found"));
 
+        // Step 1: Perform local verification
         boolean isSkuNameMatch = Objects.equals(sku.getSkuName(), request.getSkuName());
         boolean isBatchMatch = Objects.equals(sku.getBatchNumber(), request.getBatchNumber());
         boolean isExpiryMatch = Objects.equals(sku.getExpiry(), request.getExpiry());
@@ -58,40 +62,45 @@ public class AsnService {
                         request.getMrp() != null &&
                         Math.abs(sku.getMrp() - request.getMrp()) < 0.01;
 
-        if (isSkuNameMatch && isMrpMatch && isBatchMatch && isExpiryMatch) {
-            sku.setStatus("GOOD");
-        } else {
-            sku.setStatus("BAD");
-        }
+        String tentativeStatus =
+                (isSkuNameMatch && isBatchMatch && isExpiryMatch && isMrpMatch)
+                        ? "GOOD"
+                        : "DAMAGED";
 
-
-        skuRepository.save(sku);
-
+        // Step 2: Build inventory request
         InventoryRequest inventoryRequest = InventoryRequest.builder()
-                .sku(sku.getSkuId())                        // "SKU1"
-                .batchNo(sku.getBatchNumber())              // "B1"
-                .quantity(
-                        sku.getExpectedQuantity() != null
-                                ? sku.getExpectedQuantity()
-                                : 100                               // fallback safe value
-                )
-                .mrp(
-                        sku.getMrp() != null
-                                ? sku.getMrp()
-                                : 100.0
-                )
-                .expiryDate(sku.getExpiry())                // 2026-12-01
-                .status(sku.getStatus())                    // GOOD / BAD
+                .sku(sku.getSkuId())
+                .batchNo(sku.getBatchNumber())
+                .quantity(sku.getExpectedQuantity())
+                .mrp(sku.getMrp())
+                .expiryDate(sku.getExpiry())
+                .status(tentativeStatus)
+                .operation("ADD")
                 .build();
 
         try {
-            inventoryClient.addToInventory(inventoryRequest);
+            InventoryResponse response = inventoryClient.addToInventory(inventoryRequest);
+
+            if (response != null && Boolean.TRUE.equals(response.getSuccess())
+                    && "Stock added successfully".equalsIgnoreCase(response.getMessage())) {
+
+                sku.setStatus(tentativeStatus); // GOOD or DAMAGED
+
+            } else {
+                System.out.println(response);
+
+                sku.setStatus("PENDING");
+            }
+
         } catch (Exception e) {
-            System.out.println("Inventory service failed: " + e.getMessage());
+
+            // If inventory service crashed / 500 / timeout
+            sku.setStatus("PENDING");
         }
-// Call inventory service
-// inventoryClient.addToInventory(request);
-        return "Verification Completed. Status: " + sku.getStatus();
+
+        skuRepository.save(sku);
+
+        return "Final Status: " + sku.getStatus();
     }
 
 }

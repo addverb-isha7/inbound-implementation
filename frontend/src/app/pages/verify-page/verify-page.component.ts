@@ -1,60 +1,75 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AsnService } from '../../services/asn.service';
-import { Sku } from '../../models/sku.model';
 
 @Component({
   selector: 'app-verify-page',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
-  templateUrl: './verify-page.component.html',
-  styleUrls: ['./verify-page.component.css']
+  templateUrl: './verify-page.component.html'
 })
-export class VerifyPageComponent {
+export class VerifyPageComponent implements OnInit {
 
-  verifyForm: FormGroup;
+  verifyForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private asnService: AsnService) {
-     this.verifyForm = this.fb.group({
+  message: string | null = null;
+  messageType: 'success' | 'error' | null = null;
+  loading = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private asnService: AsnService
+  ) {}
+
+  ngOnInit(): void {
+    this.verifyForm = this.fb.group({
       shipmentNumber: ['', Validators.required],
       skuId: ['', Validators.required],
       skuName: ['', Validators.required],
+      mrp: [null, Validators.required],
       batchNumber: ['', Validators.required],
-      mrp: ['', Validators.required],
-      expiry: ['', Validators.required]   // 👈 MUST be expiry, not expiryDate
+      expiry: ['', Validators.required],
+      quantity: [null, Validators.required]
     });
   }
 
- onVerify() {
+  onVerify() {
 
-    if (this.verifyForm.valid) {
+    if (this.verifyForm.invalid) {
+      this.showMessage('Please fill all fields properly.', 'error');
+      return;
+    }
 
-      const shipmentNumber = this.verifyForm.value.shipmentNumber;
+    this.loading = true;
+    this.message = null;
 
-      const sku: Sku = {
-        skuId: this.verifyForm.value.skuId,
-        skuName: this.verifyForm.value.skuName,
-        batchNumber: this.verifyForm.value.batchNumber,
-        mrp: this.verifyForm.value.mrp,
-        expiry: this.verifyForm.value.expiry
-      };
+    const { shipmentNumber, ...sku } = this.verifyForm.value;
 
-      console.log('Shipment:', shipmentNumber);
-      console.log('SKU:', sku);
-
-      this.asnService.verifySku(shipmentNumber, sku).subscribe({
-        next: (res) => {
-          console.log('Verification Success', res);
-          alert('Verified Successfully ✅');
+    this.asnService.verifySku(shipmentNumber, sku)
+      .subscribe({
+        next: () => {
+          this.loading = false;
+          this.showMessage('Verification successful!', 'success');
           this.verifyForm.reset();
         },
         error: (err) => {
-          console.error('Verification Failed', err);
-          alert('Verification Failed ❌');
+          this.loading = false;
+          const backendMessage =
+            err?.error?.message ||
+            'Verification failed. Please check details.';
+          this.showMessage(backendMessage, 'error');
         }
       });
+  }
 
-    }
+  private showMessage(text: string, type: 'success' | 'error') {
+    this.message = text;
+    this.messageType = type;
+
+    setTimeout(() => {
+      this.message = null;
+      this.messageType = null;
+    }, 4000);
   }
 }

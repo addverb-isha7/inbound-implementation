@@ -1,0 +1,21 @@
+<div class="flex h-screen bg-gray-100">
+
+  <!-- Sidebar -->
+  <app-sidebar
+    [open]="isSidebarOpen"
+    (close)="isSidebarOpen = false">
+  </app-sidebar>
+
+  <div class="flex-1 flex flex-col">
+
+    <!-- Header -->
+    <app-header (menuClick)="toggleSidebar()"></app-header>
+
+    <!-- Page Content -->
+    <main class="p-8 overflow-auto">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+</div>

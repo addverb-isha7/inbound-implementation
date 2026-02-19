@@ -1,0 +1,31 @@
+<div
+  class="fixed inset-0 z-40"
+  *ngIf="open"
+  (click)="close.emit()">
+</div>
+
+<aside
+  class="fixed z-50 top-0 left-0 h-full w-64 bg-white shadow-lg transform transition-transform duration-300"
+  [class.-translate-x-full]="!open">
+
+  <div class="p-6 font-bold border-b">
+    Menu
+  </div>
+
+  <nav class="flex flex-col p-4 space-y-2">
+
+    <a routerLink="/"
+       routerLinkActive="bg-gray-200"
+       class="p-2 rounded hover:bg-gray-100">
+      Dashboard
+    </a>
+
+    <a routerLink="/verify"
+       routerLinkActive="bg-gray-200"
+       class="p-2 rounded hover:bg-gray-100">
+      SKU Verification
+    </a>
+
+  </nav>
+
+</aside>

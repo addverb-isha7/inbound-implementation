@@ -1,0 +1,132 @@
+<h1 class="text-2xl font-semibold mb-2">ASN Dashboard</h1>
+<p class="text-gray-500 mb-6">
+  Track and manage all Advanced Shipping Notices and their SKUs.
+</p>
+
+<!-- Stat Cards -->
+<div class="grid grid-cols-5 gap-4 mb-8">
+
+  <div class="bg-white p-4 rounded-xl shadow-sm border">
+    <div class="text-xs text-gray-500">TOTAL ASNS</div>
+    <div class="text-2xl font-bold mt-2">4</div>
+  </div>
+
+  <div class="bg-white p-4 rounded-xl shadow-sm border">
+    <div class="text-xs text-gray-500">TOTAL SKUS</div>
+    <div class="text-2xl font-bold mt-2">10</div>
+  </div>
+
+  <div class="bg-white p-4 rounded-xl shadow-sm border">
+    <div class="text-xs text-gray-500">VERIFIED</div>
+    <div class="text-2xl font-bold mt-2 text-green-600">5</div>
+  </div>
+
+  <div class="bg-white p-4 rounded-xl shadow-sm border">
+    <div class="text-xs text-gray-500">PENDING</div>
+    <div class="text-2xl font-bold mt-2 text-yellow-500">3</div>
+  </div>
+
+  <div class="bg-white p-4 rounded-xl shadow-sm border">
+    <div class="text-xs text-gray-500">DAMAGED</div>
+    <div class="text-2xl font-bold mt-2 text-red-600">2</div>
+  </div>
+
+</div>
+<div class="dashboard-container">
+
+  <h2>ASN Dashboard</h2>
+
+  <!-- Search -->
+  <div class="search-bar">
+    <input
+      type="text"
+      [(ngModel)]="searchShipment"
+      placeholder="Enter Shipment Number"
+    />
+    <button (click)="search()">Search</button>
+  </div>
+
+ <!-- ASN List -->
+<div class="mt-6 space-y-4">
+
+  <div 
+    class="bg-white rounded-xl shadow-sm border"
+    *ngFor="let asn of asns"
+  >
+
+    <!-- ASN Header -->
+    <div 
+      class="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-50"
+      (click)="toggleExpand(asn.shipmentNumber)"
+    >
+      <div>
+        <div class="font-semibold text-gray-800">
+          {{ asn.shipmentNumber }}
+        </div>
+        <div class="text-sm text-gray-500">
+          {{ asn.supplier || 'No Supplier' }}
+        </div>
+      </div>
+
+      <div class="text-gray-400">
+        ▼
+      </div>
+    </div>
+
+    <!-- SKU Dropdown -->
+    <div 
+      *ngIf="expandedShipment === asn.shipmentNumber"
+      class="border-t p-4 bg-gray-50"
+    >
+
+      <table class="w-full text-sm">
+
+        <thead class="text-left text-gray-500 border-b">
+  <tr>
+    <th class="py-2">SKU ID</th>
+    <th>SKU Name</th>
+    <th>MRP</th>
+    <th>Batch</th>
+    <th>Expiry</th>
+    <th>Quantity</th>
+    <th>Status</th>
+  </tr>
+</thead>
+
+
+        <tbody>
+          <tr 
+  *ngFor="let sku of asn.skus"
+  class="border-b last:border-none"
+>
+  <td class="py-2">{{ sku.skuId }}</td>
+  <td>{{ sku.skuName || '-' }}</td>
+  <td>{{ sku.mrp || '-' }}</td>
+  <td>{{ sku.batchNumber || '-' }}</td>
+  <td>{{ sku.expiry || '-' }}</td>
+  <td>{{ sku.expectedQuantity ?? '-' }}</td>
+  <td>
+    <span
+      [ngClass]="{
+        'text-green-600 font-semibold': sku.status === 'GOOD',
+        'text-yellow-500 font-semibold': sku.status === 'PENDING',
+        'text-red-600 font-semibold': sku.status === 'BAD'
+      }"
+    >
+      {{ sku.status }}
+    </span>
+  </td>
+</tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+</div>
