@@ -120,14 +120,24 @@
   <td>{{ sku.expectedQuantity ?? '-' }}</td>
   <td>
     <span
-      [ngClass]="{
-        'bg-green-100 text-green-700': sku.status === 'GOOD',
-      'bg-yellow-100 text-yellow-700': sku.status === 'PENDING',
-      'bg-red-100 text-red-700': sku.status === 'BAD'
-      }"
-    >
-      {{ sku.status }}
-    </span>
+  class="inline-flex items-center justify-center
+         min-w-[100px] px-4 py-1.5
+         rounded-full text-xs font-semibold uppercase tracking-wider
+         transition-all duration-200"
+  [ngClass]="{
+    'bg-green-500/10 text-green-600 ring-1 ring-green-400/50 shadow-sm':
+      sku.status === 'GOOD',
+
+    'bg-yellow-500/10 text-yellow-600 ring-1 ring-yellow-400/50 shadow-sm':
+      sku.status === 'PENDING',
+
+    'bg-red-500/10 text-red-600 ring-1 ring-red-400/50 shadow-sm':
+      sku.status === 'BAD'
+  }"
+>
+  {{ sku.status }}
+</span>
+
   </td>
 </tr>
 

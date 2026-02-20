@@ -1,15 +1,30 @@
-<header class="bg-white border-b flex items-center justify-between px-6 h-14">
+<header class="bg-slate-900 text-white h-14 
+               flex items-center justify-between 
+               px-6 w-full">
 
-  <!-- Hamburger -->
+
+  <!-- Logo Square -->
   <button
-    (click)="menuClick.emit()"
-    class="text-gray-600 hover:text-black text-xl">
-    ☰
-  </button>
+  (click)="menuClick.emit()"
+  class="flex flex-col justify-center items-center 
+         w-8 h-8 space-y-1 group"
+>
+  <span class="block w-5 h-0.5 bg-white"></span>
+  <span class="block w-5 h-0.5 bg-white"></span>
+  <span class="block w-5 h-0.5 bg-white"></span>
+</button>
 
-  <!-- Right Title -->
-  <div class="font-semibold text-sm">
-    ASN Portal
+  <!-- Title Section -->
+ <div class="text-sm flex items-center">
+    <span class="font-semibold">
+      Inbound Dashboard
+    </span>
+
+    <span class="mx-3 text-gray-400">|</span>
+
+    <span class="text-gray-300">
+      Warehouse Management
+    </span>
   </div>
 
 </header>
