@@ -1,85 +1,109 @@
-<div class="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+<div class="min-h-screen bg-[#f4f6f9] px-12 py-12">
 
-  <div
-    class="w-full max-w-lg bg-white rounded-3xl shadow-xl p-8 
-           transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
+  <!-- Page Container -->
+  <div class="max-w-9xl mx-auto">
 
-    <h1 class="text-3xl font-bold text-gray-800 mb-2 text-center">
-      SKU Verification
-    </h1>
-
-    <p class="text-gray-500 text-center mb-8">
-      Verify incoming SKU items against ASN records
-    </p>
-
-    <!-- Status -->
-    <div *ngIf="message"
-         class="mb-6 text-white text-center text-lg font-semibold px-6 py-4 rounded-2xl transition-all duration-300"
-         [ngClass]="{
-           'bg-green-500': messageType === 'success',
-           'bg-red-500': messageType === 'error'
-         }">
-      {{ message }}
+    <!-- Page Header -->
+    <div class="mb-8 border-b pb-4">
+      <h1 class="text-3xl font-bold text-gray-800">
+        SKU Verification
+      </h1>
+      <p class="text-gray-500 mt-1">
+        Verify incoming SKU items against ASN records
+      </p>
     </div>
 
-    <form [formGroup]="verifyForm"
-          (ngSubmit)="onVerify()"
-          class="space-y-5">
+    <!-- Status Message -->
+   <div *ngIf="message"
+     class="mb-6 text-center text-lg font-semibold px-6 py-4 rounded-xl border shadow-sm transition-all duration-300 animate-fadeIn"
+     [ngClass]="{
+       'bg-[#0f1c3f] text-white border-[#0f1c3f]': messageType === 'success',
+       'bg-white text-[#0f1c3f] border-[#0f1c3f]': messageType === 'error'
+     }">
 
-      <!-- Shipment -->
-      <input formControlName="shipmentNumber"
-             (blur)="loadSkus()"
-             placeholder="ASN / Shipment Number"
-             class="input-style" />
+  {{ message }}
 
-      <!-- SKU Dropdown -->
-      <select formControlName="skuId"
-              (change)="onSkuChange()"
-              class="input-style">
-        <option value="">Select SKU</option>
-        <option *ngFor="let sku of skuList"
-                [value]="sku.skuId">
-          {{ sku.skuId }}
-        </option>
-      </select>
+</div>
 
-      <!-- Auto SKU Name -->
-      <input formControlName="skuName"
-             placeholder="SKU Name"
-             class="input-style bg-gray-100"
-             readonly />
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-xl p-12 border border-gray-200">
 
-      <!-- MRP + Batch -->
-      <div class="grid grid-cols-2 gap-4">
-        <input formControlName="mrp"
-               placeholder="MRP"
-               class="input-style" />
+      <form [formGroup]="verifyForm"
+            (ngSubmit)="onVerify()"
+            class="space-y-8">
 
-        <input formControlName="batchNumber"
-               placeholder="Batch Number"
-               class="input-style" />
-      </div>
+        <!-- SECTION 1 -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-800 mb-6 border-b border-gray-300 pb-3">
+            Shipment Details
+          </h2>
 
-      <!-- Expiry -->
-      <input type="date"
-             formControlName="expiry"
-             class="input-style" />
+          <div class="grid grid-cols-2 gap-6">
+            <input formControlName="shipmentNumber"
+                   (blur)="loadSkus()"
+                   placeholder="ASN / Shipment Number"
+                   class="input-style" />
 
-      <!-- Button -->
-      <button
-        type="submit"
-        [disabled]="loading"
-        class="w-full py-3 rounded-xl font-semibold text-white transition-all duration-300"
-        [ngClass]="{
-          'bg-blue-600 hover:bg-blue-700': !loading,
-          'bg-gray-400 cursor-not-allowed': loading
-        }">
+            <select formControlName="skuId"
+                    (change)="onSkuChange()"
+                    class="input-style">
+              <option value="">Select SKU</option>
+              <option *ngFor="let sku of skuList"
+                      [value]="sku.skuId">
+                {{ sku.skuId }}
+              </option>
+            </select>
+          </div>
+        </div>
 
-        <span *ngIf="!loading">Verify SKU</span>
-        <span *ngIf="loading">Verifying...</span>
+        <!-- SECTION 2 -->
+        <div>
+          <h2 class="text-xl font-semibold text-gray-800 mb-6 border-b border-gray-300 pb-3">
+            SKU Details
+          </h2>
 
-      </button>
+          <div class="grid grid-cols-2 gap-8">
 
-    </form>
+            <input formControlName="skuName"
+                   placeholder="SKU Name"
+                   class="input-style bg-gray-50"
+                   readonly />
+
+            <input formControlName="mrp"
+                   placeholder="MRP"
+                   class="input-style" />
+
+            <input formControlName="batchNumber"
+                   placeholder="Batch Number"
+                   class="input-style" />
+
+            <input type="date"
+                   formControlName="expiry"
+                   class="input-style" />
+
+          </div>
+        </div>
+
+        <!-- Button -->
+        <div class="pt-4 border-t">
+          <button
+            type="submit"
+            [disabled]="loading"
+            class="w-full py-4 rounded-xl font-semibold text-white text-lg transition-all duration-300 shadow-md"
+            [ngClass]="{
+              'bg-[#0f1c3f] hover:bg-[#16265a]': !loading,
+              'bg-gray-400 cursor-not-allowed': loading
+            }">
+
+            <span *ngIf="!loading">Verify SKU</span>
+            <span *ngIf="loading">Verifying...</span>
+
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+
   </div>
 </div>
