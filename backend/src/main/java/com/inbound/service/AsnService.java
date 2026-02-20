@@ -4,6 +4,8 @@ import com.inbound.client.InventoryClient;
 import com.inbound.dto.*;
 import com.inbound.entity.Asn;
 import com.inbound.entity.Sku;
+import com.inbound.enums.InventoryOperation;
+import com.inbound.enums.SkuStatus;
 import com.inbound.repository.AsnRepository;
 import com.inbound.repository.SkuRepository;
 import lombok.RequiredArgsConstructor;
@@ -106,6 +108,9 @@ public class AsnService {
 
     public String verify(VerifyRequest request) {
 
+        if (request.getReceivedQuantity() == null || request.getReceivedQuantity() <= 0) {
+            throw new RuntimeException("Received quantity must be greater than 0");
+        }
         Asn asn = asnRepository.findByShipmentNumber(request.getShipmentNumber())
                 .orElseThrow(() -> new RuntimeException("ASN not found"));
 
@@ -115,7 +120,7 @@ public class AsnService {
                         request.getShipmentNumber())
                 .orElseThrow(() -> new RuntimeException("SKU not found"));
 
-        // Step 1: Perform local verification
+        // 1️⃣ Local verification
         boolean isSkuNameMatch = Objects.equals(sku.getSkuName(), request.getSkuName());
         boolean isBatchMatch = Objects.equals(sku.getBatchNumber(), request.getBatchNumber());
         boolean isExpiryMatch = Objects.equals(sku.getExpiry(), request.getExpiry());
@@ -125,45 +130,50 @@ public class AsnService {
                         request.getMrp() != null &&
                         Math.abs(sku.getMrp() - request.getMrp()) < 0.01;
 
-        String tentativeStatus =
+        SkuStatus tentativeStatus =
                 (isSkuNameMatch && isBatchMatch && isExpiryMatch && isMrpMatch)
-                        ? "GOOD"
-                        : "DAMAGED";
+                        ? SkuStatus.GOOD
+                        : SkuStatus.DAMAGED;
 
-        // Step 2: Build inventory request
-        InventoryRequest inventoryRequest = InventoryRequest.builder()
+        // 2️⃣ Build batch request
+        BatchRequest batchRequest = BatchRequest.builder()
                 .sku(sku.getSkuId())
                 .batchNo(sku.getBatchNumber())
-                .quantity(sku.getExpectedQuantity())
+                .quantity(request.getReceivedQuantity())
                 .mrp(sku.getMrp())
                 .expiryDate(sku.getExpiry())
                 .status(tentativeStatus)
-                .operation("ADD")
+                .build();
+
+        InventoryRequest inventoryRequest = InventoryRequest.builder()
+                .operation(InventoryOperation.ADD)   // ✅ ENUM USED
+                .items(List.of(batchRequest))
                 .build();
 
         try {
-            InventoryResponse response = inventoryClient.addToInventory(inventoryRequest);
+            System.out.println("Calling Inventory Service...");
+            InventoryResponse response =
+                    inventoryClient.addToInventory(inventoryRequest);
 
-            if (response != null && Boolean.TRUE.equals(response.getSuccess())
-                    && "Stock added successfully".equalsIgnoreCase(response.getMessage())) {
+            // 3️⃣ Compare using success flag (NOT message)
+            if (response != null && Boolean.TRUE.equals(response.getSuccess())) {
 
-                sku.setStatus(tentativeStatus); // GOOD or DAMAGED
+                sku.setStatus(tentativeStatus);
+                sku.setReceivedQuantity(request.getReceivedQuantity());
 
             } else {
-                System.out.println(response);
 
-                sku.setStatus("PENDING");
+                sku.setStatus(SkuStatus.PENDING);
             }
 
         } catch (Exception e) {
-
-            // If inventory service crashed / 500 / timeout
-            sku.setStatus("PENDING");
+            e.printStackTrace();   // ADD THIS
+            sku.setStatus(SkuStatus.PENDING);
         }
 
         skuRepository.save(sku);
 
-        return "Final Status: " + sku.getStatus();
+        return "Final Status: " + sku.getStatus().name();
     }
 
 }

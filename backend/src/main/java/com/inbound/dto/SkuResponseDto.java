@@ -1,5 +1,6 @@
 package com.inbound.dto;
 
+import com.inbound.enums.SkuStatus;
 import lombok.Builder;
 import lombok.Data;
 
@@ -16,5 +17,5 @@ public class SkuResponseDto {
     private LocalDate expiry;
     private Integer expectedQuantity;
     private Integer receivedQuantity;
-    private String status;
+    private SkuStatus status;
 }

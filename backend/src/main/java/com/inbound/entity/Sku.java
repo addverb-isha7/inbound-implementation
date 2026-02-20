@@ -3,6 +3,7 @@ package com.inbound.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.inbound.enums.SkuStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,7 +30,9 @@ public class Sku {
     private LocalDate expiry;
     private Integer expectedQuantity;
     private Integer receivedQuantity;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SkuStatus status;
 
     @ManyToOne
     @JoinColumn(name = "asn_id")
@@ -44,7 +47,7 @@ public class Sku {
         }
 
         if (status == null) {
-            status = "PENDING";
+            status = SkuStatus.PENDING;
         }
     }
 }
