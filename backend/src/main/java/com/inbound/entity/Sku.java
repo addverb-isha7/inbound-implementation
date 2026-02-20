@@ -1,5 +1,6 @@
 package com.inbound.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -27,13 +28,24 @@ public class Sku {
     private String batchNumber;
     private LocalDate expiry;
     private Integer expectedQuantity;
-
+    private Integer receivedQuantity;
     private String status;
 
     @ManyToOne
     @JoinColumn(name = "asn_id")
-    @JsonIgnore
+    @JsonBackReference
     private Asn asn;
+// THIS RUNS AUTOMATICALLY BEFORE INSERT
+    @PrePersist
+    public void prePersist() {
 
+        if (receivedQuantity == null) {
+            receivedQuantity = 0;
+        }
+
+        if (status == null) {
+            status = "PENDING";
+        }
+    }
 }
 

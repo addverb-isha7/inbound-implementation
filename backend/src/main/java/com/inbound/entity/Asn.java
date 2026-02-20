@@ -1,5 +1,6 @@
 package com.inbound.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class Asn {
     private String supplier;
 
     @OneToMany(mappedBy = "asn", cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<Sku> skus;
 }
 

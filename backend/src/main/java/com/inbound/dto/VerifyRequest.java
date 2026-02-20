@@ -15,5 +15,5 @@ private String shipmentNumber;
     private String batchNumber;
     private Double mrp;
     private LocalDate expiry;
- //   private Integer receivedQuantity;
+   private Integer receivedQuantity;
 }
