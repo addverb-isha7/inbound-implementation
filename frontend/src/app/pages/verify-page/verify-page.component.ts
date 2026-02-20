@@ -12,7 +12,7 @@ import { AsnService } from '../../services/asn.service';
 export class VerifyPageComponent implements OnInit {
 
   verifyForm!: FormGroup;
-
+skuList: any[] = [];
   message: string | null = null;
   messageType: 'success' | 'error' | null = null;
   loading = false;
@@ -21,6 +21,38 @@ export class VerifyPageComponent implements OnInit {
     private fb: FormBuilder,
     private asnService: AsnService
   ) {}
+
+loadSkus() {
+  const shipment = this.verifyForm.get('shipmentNumber')?.value;
+
+  if (!shipment) return;
+
+  this.asnService.getAsnByShipment(shipment)
+    .subscribe({
+      next: (asn: any) => {
+        this.skuList = asn.skus || [];
+      },
+      error: () => {
+        this.showMessage('ASN not found', 'error');
+        this.skuList = [];
+      }
+    });
+}
+
+onSkuChange() {
+  const selectedSkuId = this.verifyForm.get('skuId')?.value;
+
+  const selectedSku = this.skuList.find(
+    sku => sku.skuId === selectedSkuId
+  );
+
+  if (selectedSku) {
+    this.verifyForm.patchValue({
+      skuName: selectedSku.skuName
+    });
+  }
+}
+
 
   ngOnInit(): void {
     this.verifyForm = this.fb.group({

@@ -1,63 +1,85 @@
-<div *ngIf="message"
-     class="mb-6 text-white text-lg font-semibold px-6 py-4 rounded-xl"
-     [ngClass]="{
-       'bg-red-600': messageType === 'error',
-       'bg-green-600': messageType === 'success'
-     }">
-  {{ message }}
-</div>
+<div class="min-h-screen bg-gray-100 flex items-center justify-center p-6">
 
+  <div
+    class="w-full max-w-lg bg-white rounded-3xl shadow-xl p-8 
+           transition-all duration-300 hover:shadow-2xl hover:-translate-y-1">
 
+    <h1 class="text-3xl font-bold text-gray-800 mb-2 text-center">
+      SKU Verification
+    </h1>
 
-<h1 class="text-2xl font-semibold mb-2">SKU Verification</h1>
-<p class="text-gray-500 mb-6">
-  Verify incoming SKU items against their ASN records.
-</p>
+    <p class="text-gray-500 text-center mb-8">
+      Verify incoming SKU items against ASN records
+    </p>
 
-<div class="max-w-md mx-auto bg-white rounded-2xl shadow-md p-6">
-
-  <h2 class="text-lg font-semibold mb-1">Verify SKU</h2>
-  <p class="text-gray-500 text-sm mb-4">
-    Enter details to verify against ASN records
-  </p>
-
-  <form [formGroup]="verifyForm"
-        (ngSubmit)="onVerify()"
-        class="space-y-4">
-
-    <input formControlName="shipmentNumber"
-           placeholder="ASN / Shipment Number"
-           class="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500" />
-
-    <input formControlName="skuId"
-           placeholder="SKU ID"
-           class="w-full border rounded-lg px-3 py-2" />
-
-
-<input formControlName="skuName"
-placeholder="SKU Name"
-class="w-full border rounded-lg px-3 py2"
-/>
-
-    <div class="grid grid-cols-2 gap-3">
-      <input formControlName="mrp"
-             placeholder="MRP"
-             class="border rounded-lg px-3 py-2" />
-
-      <input formControlName="batchNumber"
-             placeholder="Batch Number"
-             class="border rounded-lg px-3 py-2" />
+    <!-- Status -->
+    <div *ngIf="message"
+         class="mb-6 text-white text-center text-lg font-semibold px-6 py-4 rounded-2xl transition-all duration-300"
+         [ngClass]="{
+           'bg-green-500': messageType === 'success',
+           'bg-red-500': messageType === 'error'
+         }">
+      {{ message }}
     </div>
 
-    <input type="date"
-           formControlName="expiry"
-           class="w-full border rounded-lg px-3 py-2" />
+    <form [formGroup]="verifyForm"
+          (ngSubmit)="onVerify()"
+          class="space-y-5">
 
-    <button
-      class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
-      Verify SKU
-    </button>
+      <!-- Shipment -->
+      <input formControlName="shipmentNumber"
+             (blur)="loadSkus()"
+             placeholder="ASN / Shipment Number"
+             class="input-style" />
 
-  </form>
+      <!-- SKU Dropdown -->
+      <select formControlName="skuId"
+              (change)="onSkuChange()"
+              class="input-style">
+        <option value="">Select SKU</option>
+        <option *ngFor="let sku of skuList"
+                [value]="sku.skuId">
+          {{ sku.skuId }}
+        </option>
+      </select>
 
+      <!-- Auto SKU Name -->
+      <input formControlName="skuName"
+             placeholder="SKU Name"
+             class="input-style bg-gray-100"
+             readonly />
+
+      <!-- MRP + Batch -->
+      <div class="grid grid-cols-2 gap-4">
+        <input formControlName="mrp"
+               placeholder="MRP"
+               class="input-style" />
+
+        <input formControlName="batchNumber"
+               placeholder="Batch Number"
+               class="input-style" />
+      </div>
+
+      <!-- Expiry -->
+      <input type="date"
+             formControlName="expiry"
+             class="input-style" />
+
+      <!-- Button -->
+      <button
+        type="submit"
+        [disabled]="loading"
+        class="w-full py-3 rounded-xl font-semibold text-white transition-all duration-300"
+        [ngClass]="{
+          'bg-blue-600 hover:bg-blue-700': !loading,
+          'bg-gray-400 cursor-not-allowed': loading
+        }">
+
+        <span *ngIf="!loading">Verify SKU</span>
+        <span *ngIf="loading">Verifying...</span>
+
+      </button>
+
+    </form>
+  </div>
 </div>
