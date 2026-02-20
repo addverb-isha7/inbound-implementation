@@ -30,7 +30,7 @@ export class VerifyPageComponent implements OnInit {
       mrp: [null, Validators.required],
       batchNumber: ['', Validators.required],
       expiry: ['', Validators.required],
-      quantity: [null, Validators.required]
+     // quantity: [null, Validators.required]
     });
   }
 
@@ -45,22 +45,37 @@ export class VerifyPageComponent implements OnInit {
     this.message = null;
 
     const { shipmentNumber, ...sku } = this.verifyForm.value;
+this.asnService.verifySku(shipmentNumber, sku)
+  .subscribe({
+    next: (response: string) => {
+      this.loading = false;
 
-    this.asnService.verifySku(shipmentNumber, sku)
-      .subscribe({
-        next: () => {
-          this.loading = false;
-          this.showMessage('Verification successful!', 'success');
-          this.verifyForm.reset();
-        },
-        error: (err) => {
-          this.loading = false;
-          const backendMessage =
-            err?.error?.message ||
-            'Verification failed. Please check details.';
-          this.showMessage(backendMessage, 'error');
-        }
-      });
+      // response example: "Final Status: GOOD"
+      const status = response.split(': ')[1]?.trim();
+
+      if (status === 'GOOD') {
+        this.showMessage('Verification Successful - Status: GOOD ✅', 'success');
+      } 
+      else if (status === 'DAMAGED') {
+        this.showMessage('Verification Successful - Status: DAMAGED ⚠️', 'error');
+      } 
+      else if (status === 'PENDING') {
+        this.showMessage('Verification Pending ⏳', 'error');
+      } 
+      else {
+        this.showMessage('Unexpected response from server.', 'error');
+      }
+
+      this.verifyForm.reset();
+    },
+    error: (err) => {
+      this.loading = false;
+      const backendMessage =
+        err?.error?.message ||
+        'Verification failed. Please check details.';
+      this.showMessage(backendMessage, 'error');
+    }
+  });
   }
 
   private showMessage(text: string, type: 'success' | 'error') {

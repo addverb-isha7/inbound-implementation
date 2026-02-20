@@ -58,11 +58,11 @@
   </div>
 
  <!-- ASN List -->
-<div class="mt-6 space-y-3">
+<div class="mt-6 bg-white rounded-2xl shadow-md border overflow-hidden">
 
  
 <div 
-  class="bg-white rounded-xl shadow-sm border"
+  class="border-b last:border-none"
   *ngFor="let asn of asns"
 >
 
@@ -119,24 +119,26 @@
   <td>{{ sku.expiry || '-' }}</td>
   <td>{{ sku.expectedQuantity ?? '-' }}</td>
   <td>
-    <span
+   <span
   class="inline-flex items-center justify-center
-         min-w-[100px] px-4 py-1.5
-         rounded-full text-xs font-semibold uppercase tracking-wider
-         transition-all duration-200"
+         min-w-[130px] px-6 py-2
+         rounded-full text-xs font-bold uppercase tracking-widest
+         transition-all duration-300
+         border"
   [ngClass]="{
-    'bg-green-500/10 text-green-600 ring-1 ring-green-400/50 shadow-sm':
+    'bg-green-500/10 text-green-500 border-green-400 shadow-[0_0_12px_rgba(34,197,94,0.7)]':
       sku.status === 'GOOD',
 
-    'bg-yellow-500/10 text-yellow-600 ring-1 ring-yellow-400/50 shadow-sm':
+    'bg-yellow-500/10 text-yellow-400 border-yellow-400 shadow-[0_0_12px_rgba(234,179,8,0.7)]':
       sku.status === 'PENDING',
 
-    'bg-red-500/10 text-red-600 ring-1 ring-red-400/50 shadow-sm':
+    'bg-red-500/10 text-red-500 border-red-400 shadow-[0_0_12px_rgba(239,68,68,0.7)]':
       sku.status === 'BAD'
   }"
 >
   {{ sku.status }}
 </span>
+
 
   </td>
 </tr>

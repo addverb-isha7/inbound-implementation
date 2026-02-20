@@ -24,10 +24,14 @@ export class AsnService {
   }
 
   verifySku(shipmentNumber: string, sku: any) {
+  const payload = { shipmentNumber, ...sku };
+
   return this.http.post(
-    `${this.baseUrl}/${shipmentNumber}/verify`,
-    sku
+    `${this.baseUrl}/verify`,
+    payload,
+    { responseType: 'text' }
   );
 }
+
 
 }
